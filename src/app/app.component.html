@@ -140,7 +140,9 @@
 
   @if (showUserManagement) {
     <div class="modal-overlay" (click)="closeUserManagement()">
-      <app-user-management (close)="closeUserManagement()"></app-user-management>
+      <div (click)="$event.stopPropagation()">
+        <app-user-management (close)="closeUserManagement()"></app-user-management>
+      </div>
     </div>
   }
 </div>
