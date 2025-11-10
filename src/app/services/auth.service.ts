@@ -119,7 +119,14 @@ export class AuthService {
     const q = query(usersCol, where('uid', '==', uid));
     const snapshot = await getDocs(q);
     
-    if (snapshot.empty) return 'pending';
+    if (snapshot.empty) {
+      // Crea il record se non esiste
+      const user = this.getCurrentUser();
+      if (user) {
+        await this.createPendingUser(user);
+      }
+      return 'pending';
+    }
     return snapshot.docs[0].data()['status'] || 'pending';
   }
 
