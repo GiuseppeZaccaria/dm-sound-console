@@ -1,0 +1,9 @@
+<div class="sound-card" (click)="onCardClick()" [class.playing]="isPlaying">
+  <div class="card-image">
+    <img [src]="sound.imageUrl" [alt]="sound.title">
+    <div class="play-overlay">
+      <div class="play-icon">{{ isPlaying ? '⏸' : '▶' }}</div>
+    </div>
+  </div>
+  <div class="card-title">{{ sound.title }}</div>
+</div>
