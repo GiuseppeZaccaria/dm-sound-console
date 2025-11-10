@@ -4,17 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { SoundCardComponent } from './components/sound-card/sound-card.component';
 import { UploadModalComponent } from './components/upload-modal/upload-modal.component';
 import { EditModalComponent } from './components/edit-modal/edit-modal.component';
-import { UserManagementComponent } from './components/user-management/user-management.component';
-import { PendingApprovalComponent } from './components/pending-approval/pending-approval.component';
-import { AuthComponent } from './components/auth/auth.component';
 import { SoundService } from './services/sound.service';
-import { AuthService } from './services/auth.service';
 import { Sound } from './models/sound.model';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, SoundCardComponent, UploadModalComponent, EditModalComponent, UserManagementComponent, PendingApprovalComponent, AuthComponent],
+  imports: [CommonModule, FormsModule, SoundCardComponent, UploadModalComponent, EditModalComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -32,42 +28,16 @@ export class AppComponent implements OnInit, OnDestroy {
   theme: 'green' | 'purple' | 'blue' | 'red' = 'green';
   autoPlayNext: boolean = false;
   shuffleMode: boolean = false;
-  isAuthenticated: boolean = false;
-  isAdmin: boolean = false;
+  isAdmin: boolean = true;
   showEditModal: boolean = false;
   soundToEdit: Sound | null = null;
-  showUserManagement: boolean = false;
-  userStatus: string = 'unknown';
 
   constructor(
-    private soundService: SoundService,
-    private authService: AuthService
+    private soundService: SoundService
   ) {}
 
   ngOnInit(): void {
-    this.authService.currentUser$.subscribe(async user => {
-      this.isAuthenticated = !!user;
-      this.isAdmin = this.authService.isAdmin();
-      
-      if (user) {
-        // DEBUG: Recupera tutti gli utenti
-        const allUsers = await this.authService.getAllUsers();
-        console.log('🔍 TUTTI GLI UTENTI:', allUsers);
-        console.log('👤 UTENTE CORRENTE UID:', user.uid);
-        console.log('📧 UTENTE CORRENTE EMAIL:', user.email);
-        
-        this.userStatus = await this.authService.getUserStatus(user.uid);
-        console.log('✅ STATUS RECUPERATO:', this.userStatus);
-        console.log('🔑 IS ADMIN:', this.isAdmin);
-        
-        if (this.userStatus === 'approved' || this.isAdmin) {
-          this.loadSounds();
-        }
-      } else {
-        this.userStatus = 'unknown';
-      }
-    });
-    
+    this.loadSounds();
     this.playbackSpeed = this.soundService.getSpeed();
     this.pitch = this.soundService.getPitch();
     document.addEventListener('keydown', (e) => this.handleKeyPress(e));
@@ -200,9 +170,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.shuffleMode = !this.shuffleMode;
   }
 
-  async logout(): Promise<void> {
-    await this.authService.logout();
-  }
+
 
   toggleLoop(sound: Sound): void {
     const wasPlaying = this.isPlaying(sound.id);
@@ -220,15 +188,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   canEditSound(sound: Sound): boolean {
-    if (this.isAdmin) return true;
-    const user = this.authService.getCurrentUser();
-    return user?.uid === sound.userId;
+    return this.isAdmin;
   }
 
   handleKeyPress(event: KeyboardEvent): void {
-    // Abilita tasti numerici solo se autenticato, approvato/admin, e nessun modal aperto
-    if (!this.isAuthenticated || (this.userStatus !== 'approved' && !this.isAdmin)) return;
-    if (this.showUploadModal || this.showEditModal || this.showUserManagement) return;
+    if (this.showUploadModal || this.showEditModal) return;
     
     const key = parseInt(event.key);
     if (key >= 1 && key <= 9) {
@@ -271,11 +235,5 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  openUserManagement(): void {
-    this.showUserManagement = true;
-  }
 
-  closeUserManagement(): void {
-    this.showUserManagement = false;
-  }
 }
