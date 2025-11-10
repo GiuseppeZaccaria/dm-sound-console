@@ -226,6 +226,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   handleKeyPress(event: KeyboardEvent): void {
+    // Abilita tasti numerici solo se autenticato, approvato/admin, e nessun modal aperto
+    if (!this.isAuthenticated || (this.userStatus !== 'approved' && !this.isAdmin)) return;
+    if (this.showUploadModal || this.showEditModal || this.showUserManagement) return;
+    
     const key = parseInt(event.key);
     if (key >= 1 && key <= 9) {
       const index = key - 1;
