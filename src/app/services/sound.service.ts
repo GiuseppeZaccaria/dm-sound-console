@@ -55,10 +55,14 @@ export class SoundService {
     
     this.applyAudioEffects();
     
-    this.audio.play();
+    this.audio.play().then(() => {
+      // Increment only if play was successful
+      this.incrementPlayCount(sound.id);
+    }).catch(error => {
+      console.error('Error playing audio:', error);
+    });
     
     this.fadeIn();
-    this.incrementPlayCount(sound.id);
     
     this.audio.onended = () => {
       if (!this.audio?.loop) {
