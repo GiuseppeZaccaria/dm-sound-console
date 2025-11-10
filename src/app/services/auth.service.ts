@@ -115,19 +115,28 @@ export class AuthService {
     const app = getApp();
     const db = getFirestore(app);
     
-    const usersCol = collection(db, 'users');
-    const q = query(usersCol, where('uid', '==', uid));
-    const snapshot = await getDocs(q);
-    
-    if (snapshot.empty) {
-      // Crea il record se non esiste
-      const user = this.getCurrentUser();
-      if (user) {
-        await this.createPendingUser(user);
+    // Retry fino a 3 volte per gestire race condition
+    for (let i = 0; i < 3; i++) {
+      const usersCol = collection(db, 'users');
+      const q = query(usersCol, where('uid', '==', uid));
+      const snapshot = await getDocs(q);
+      
+      if (!snapshot.empty) {
+        return snapshot.docs[0].data()['status'] || 'pending';
       }
-      return 'pending';
+      
+      // Aspetta 500ms prima di riprovare
+      if (i < 2) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
     }
-    return snapshot.docs[0].data()['status'] || 'pending';
+    
+    // Se dopo 3 tentativi non trova il record, crea l'utente
+    const user = this.getCurrentUser();
+    if (user) {
+      await this.createPendingUser(user);
+    }
+    return 'pending';
   }
 
   async getAllUsers(): Promise<any[]> {
