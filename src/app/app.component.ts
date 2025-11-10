@@ -226,7 +226,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   checkAdminPassword(): void {
-    if (this.adminPassword === 'fe') {
+    if (this.adminPassword === 'fedm25') {
       this.isAdmin = true;
       localStorage.setItem('isAdmin', 'true');
       this.closeAdminLogin();
