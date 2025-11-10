@@ -1,3 +1,23 @@
+:root {
+  --accent-color: #1ed760;
+}
+
+[data-theme="green"] {
+  --accent-color: #1ed760;
+}
+
+[data-theme="purple"] {
+  --accent-color: #a855f7;
+}
+
+[data-theme="blue"] {
+  --accent-color: #3b82f6;
+}
+
+[data-theme="red"] {
+  --accent-color: #ef4444;
+}
+
 * {
   margin: 0;
   padding: 0;

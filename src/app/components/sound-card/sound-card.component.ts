@@ -12,9 +12,16 @@ import { Sound } from '../../models/sound.model';
 export class SoundCardComponent {
   @Input() sound!: Sound;
   @Input() isPlaying: boolean = false;
+  @Input() isLooping: boolean = false;
   @Output() cardClick = new EventEmitter<Sound>();
+  @Output() loopToggle = new EventEmitter<Sound>();
 
   onCardClick(): void {
     this.cardClick.emit(this.sound);
+  }
+
+  onLoopClick(event: Event): void {
+    event.stopPropagation();
+    this.loopToggle.emit(this.sound);
   }
 }

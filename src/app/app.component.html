@@ -17,6 +17,10 @@
           (input)="onSearch()">
       </div>
       
+      <button class="control-btn" [class.active]="showControls" (click)="toggleControls()">
+        ⚙️ Controls
+      </button>
+      
       <button 
         class="trending-btn" 
         [class.active]="showTrending"
@@ -24,14 +28,76 @@
         🔥 Trending
       </button>
     </div>
+
+    @if (showControls) {
+      <div class="advanced-controls">
+        <div class="control-group">
+          <label>Dimensione Card:</label>
+          <div class="btn-group">
+            <button [class.active]="gridSize === 'small'" (click)="setGridSize('small')">S</button>
+            <button [class.active]="gridSize === 'medium'" (click)="setGridSize('medium')">M</button>
+            <button [class.active]="gridSize === 'large'" (click)="setGridSize('large')">L</button>
+          </div>
+        </div>
+        
+        <div class="control-group">
+          <label>Ordina per:</label>
+          <div class="btn-group">
+            <button [class.active]="sortBy === 'date'" (click)="setSortBy('date')">Data</button>
+            <button [class.active]="sortBy === 'name'" (click)="setSortBy('name')">Nome</button>
+            <button [class.active]="sortBy === 'playCount'" (click)="setSortBy('playCount')">Play</button>
+          </div>
+        </div>
+        
+        <div class="control-group">
+          <label>Velocità:</label>
+          <div class="btn-group">
+            <button [class.active]="playbackSpeed === 0.5" (click)="setSpeed(0.5)">0.5x</button>
+            <button [class.active]="playbackSpeed === 1" (click)="setSpeed(1)">1x</button>
+            <button [class.active]="playbackSpeed === 1.5" (click)="setSpeed(1.5)">1.5x</button>
+            <button [class.active]="playbackSpeed === 2" (click)="setSpeed(2)">2x</button>
+          </div>
+        </div>
+        
+        <div class="control-group">
+          <label>Pitch:</label>
+          <div class="btn-group">
+            <button [class.active]="pitch === -2" (click)="setPitch(-2)">-2</button>
+            <button [class.active]="pitch === 0" (click)="setPitch(0)">0</button>
+            <button [class.active]="pitch === 2" (click)="setPitch(2)">+2</button>
+            <button [class.active]="pitch === 4" (click)="setPitch(4)">+4</button>
+          </div>
+        </div>
+        
+        <div class="control-group">
+          <label>Tema:</label>
+          <div class="btn-group">
+            <button [class.active]="theme === 'green'" (click)="setTheme('green')">🟢</button>
+            <button [class.active]="theme === 'purple'" (click)="setTheme('purple')">🟣</button>
+            <button [class.active]="theme === 'blue'" (click)="setTheme('blue')">🔵</button>
+            <button [class.active]="theme === 'red'" (click)="setTheme('red')">🔴</button>
+          </div>
+        </div>
+        
+        <div class="control-group">
+          <label>Playback:</label>
+          <div class="btn-group">
+            <button [class.active]="autoPlayNext" (click)="toggleAutoPlay()">⏭️ Auto</button>
+            <button [class.active]="shuffleMode" (click)="toggleShuffle()">🔀 Shuffle</button>
+          </div>
+        </div>
+      </div>
+    }
   </header>
   
-  <div class="sound-grid">
+  <div class="sound-grid" [class.grid-small]="gridSize === 'small'" [class.grid-large]="gridSize === 'large'">
     @for (sound of filteredSounds; track sound.id) {
       <app-sound-card 
         [sound]="sound" 
         [isPlaying]="isPlaying(sound.id)"
-        (cardClick)="onSoundClick($event)">
+        [isLooping]="isLooping(sound.id)"
+        (cardClick)="onSoundClick($event)"
+        (loopToggle)="toggleLoop($event)">
       </app-sound-card>
     }
   </div>

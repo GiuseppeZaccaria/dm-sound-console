@@ -1,11 +1,28 @@
 .app-container {
   min-height: 100vh;
-  background: linear-gradient(180deg, #1a1a1a 0%, #121212 100%);
+  background: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #0f1419, #121212);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   padding: 2rem;
+  position: relative;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .app-header {
   margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 10;
 }
 
 .header-content {
@@ -54,6 +71,7 @@
   border-color: #1ed760;
 }
 
+.control-btn,
 .trending-btn {
   background: rgba(255, 255, 255, 0.05);
   color: #b3b3b3;
@@ -67,15 +85,69 @@
   white-space: nowrap;
 }
 
+.control-btn:hover,
 .trending-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
 
+.control-btn.active,
 .trending-btn.active {
-  background: #1ed760;
+  background: var(--accent-color);
   color: #000000;
-  border-color: #1ed760;
+  border-color: var(--accent-color);
+}
+
+.advanced-controls {
+  display: flex;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control-group label {
+  font-size: 0.75rem;
+  color: #b3b3b3;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-group button {
+  background: rgba(255, 255, 255, 0.05);
+  color: #b3b3b3;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-group button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.btn-group button.active {
+  background: var(--accent-color);
+  color: #000000;
+  border-color: var(--accent-color);
 }
 
 .app-header h1 {
@@ -87,7 +159,7 @@
 }
 
 .upload-btn {
-  background: #1ed760;
+  background: var(--accent-color);
   color: #000000;
   border: none;
   padding: 0.75rem 2rem;
@@ -99,7 +171,7 @@
 }
 
 .upload-btn:hover {
-  background: #1fdf64;
+  background: var(--accent-color);
   transform: scale(1.04);
 }
 
@@ -109,6 +181,19 @@
   gap: 1.5rem;
   max-width: 1400px;
   margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.sound-grid.grid-small {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.sound-grid.grid-large {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 2rem;
 }
 
 @media (max-width: 768px) {
@@ -134,8 +219,14 @@
     min-width: auto;
   }
 
+  .control-btn,
   .trending-btn {
     width: 100%;
+  }
+
+  .advanced-controls {
+    flex-direction: column;
+    gap: 1rem;
   }
 
   .app-header h1 {

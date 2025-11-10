@@ -10,6 +10,9 @@
         <div class="wave-bar"></div>
       </div>
     }
+    <button class="loop-btn" [class.active]="isLooping" (click)="onLoopClick($event)">
+      🔁
+    </button>
     <div class="play-overlay">
       <div class="play-icon">{{ isPlaying ? '⏸' : '▶' }}</div>
     </div>

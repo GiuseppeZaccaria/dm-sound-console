@@ -11,6 +11,10 @@ export class SoundService {
   private currentPlayingId: number | null = null;
   private volume: number = 0.7;
   private fadeInterval: any = null;
+  private playbackSpeed: number = 1;
+  private loopingSound: Sound | null = null;
+  private pitch: number = 0;
+  private endCallback: (() => void) | null = null;
 
   constructor(private firebaseService: FirebaseService) {}
 
@@ -29,28 +33,44 @@ export class SoundService {
     }
 
     this.stop();
+    
+    if (sound.isLooping) {
+      this.loopingSound = sound;
+    } else {
+      this.loopingSound = null;
+    }
+    
     this.audio = new Audio(sound.audioUrl);
     this.audio.volume = 0;
+    this.audio.loop = sound.isLooping || false;
     this.currentPlayingId = sound.id;
+    
+    this.applyAudioEffects();
+    
     this.audio.play();
     
     this.fadeIn();
     this.incrementPlayCount(sound.id);
     
     this.audio.onended = () => {
-      this.currentPlayingId = null;
+      if (!this.audio?.loop) {
+        this.currentPlayingId = null;
+        this.loopingSound = null;
+        if (this.endCallback) {
+          this.endCallback();
+        }
+      }
     };
   }
 
   stop(): void {
     if (this.audio) {
-      this.fadeOut(() => {
-        if (this.audio) {
-          this.audio.pause();
-          this.audio.currentTime = 0;
-          this.currentPlayingId = null;
-        }
-      });
+      if (this.fadeInterval) clearInterval(this.fadeInterval);
+      this.audio.pause();
+      this.audio.currentTime = 0;
+      this.audio = null;
+      this.currentPlayingId = null;
+      this.loopingSound = null;
     }
   }
 
@@ -63,6 +83,41 @@ export class SoundService {
 
   getVolume(): number {
     return this.volume;
+  }
+
+  setSpeed(speed: number): void {
+    this.playbackSpeed = speed;
+    if (this.audio) {
+      this.audio.playbackRate = speed;
+    }
+  }
+
+  getSpeed(): number {
+    return this.playbackSpeed;
+  }
+
+  getLoopingSound(): Sound | null {
+    return this.loopingSound;
+  }
+
+  setPitch(pitch: number): void {
+    this.pitch = pitch;
+  }
+
+  getPitch(): number {
+    return this.pitch;
+  }
+
+  onSoundEnded(callback: () => void): void {
+    this.endCallback = callback;
+  }
+
+  private applyAudioEffects(): void {
+    if (!this.audio) return;
+    
+    const pitchShift = Math.pow(2, this.pitch / 12);
+    this.audio.playbackRate = this.playbackSpeed * pitchShift;
+    this.audio.preservesPitch = false;
   }
 
   private fadeIn(): void {

@@ -4,4 +4,5 @@ export interface Sound {
   imageUrl: string;
   audioUrl: string;
   playCount?: number;
+  isLooping?: boolean;
 }
