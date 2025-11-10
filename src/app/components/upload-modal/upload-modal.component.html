@@ -5,21 +5,7 @@
       <button class="close-btn" (click)="closeModal()">✕</button>
     </div>
 
-    @if (!isAuthenticated) {
-      <form (ngSubmit)="checkPassword()" class="password-form">
-        <div class="form-group">
-          <label>Password</label>
-          <input 
-            type="password" 
-            [(ngModel)]="password" 
-            name="password"
-            placeholder="Inserisci password"
-            autocomplete="off">
-        </div>
-        <button type="submit" class="btn-submit">Accedi</button>
-      </form>
-    } @else {
-      <form (ngSubmit)="onSubmit()" class="upload-form">
+    <form (ngSubmit)="onSubmit()" class="upload-form">
       <div class="form-group">
         <label>Titolo</label>
         <input 
@@ -61,6 +47,5 @@
         </button>
       </div>
     </form>
-    }
   </div>
 </div>

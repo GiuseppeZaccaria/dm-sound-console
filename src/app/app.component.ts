@@ -61,7 +61,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.soundService.getSounds().subscribe(sounds => {
       this.sounds = sounds;
       this.applyFilters();
-      this.loading = false;
+      setTimeout(() => {
+        this.loading = false;
+      }, 1000);
     });
   }
 

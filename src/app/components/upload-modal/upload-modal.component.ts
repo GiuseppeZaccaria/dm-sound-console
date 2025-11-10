@@ -15,15 +15,11 @@ export class UploadModalComponent {
   @Output() close = new EventEmitter<void>();
   @Output() soundAdded = new EventEmitter<void>();
 
-  password: string = '';
-  isAuthenticated: boolean = false;
   title: string = '';
   imageFile: File | null = null;
   audioFile: File | null = null;
   uploading: boolean = false;
   uploadProgress: string = '';
-  
-  private readonly correctPassword = 'hodeiticmade';
 
   private cloudName = 'digu51dei';
   private uploadPreset = 'g34lxkn3';
@@ -33,14 +29,7 @@ export class UploadModalComponent {
     private soundService: SoundService
   ) {}
 
-  checkPassword(): void {
-    if (this.password === this.correctPassword) {
-      this.isAuthenticated = true;
-    } else {
-      alert('Password errata!');
-      this.password = '';
-    }
-  }
+
 
   onImageSelect(event: any): void {
     this.imageFile = event.target.files[0];
@@ -113,7 +102,5 @@ export class UploadModalComponent {
     this.title = '';
     this.imageFile = null;
     this.audioFile = null;
-    this.password = '';
-    this.isAuthenticated = false;
   }
 }
