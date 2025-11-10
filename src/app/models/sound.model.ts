@@ -3,4 +3,5 @@ export interface Sound {
   title: string;
   imageUrl: string;
   audioUrl: string;
+  playCount?: number;
 }

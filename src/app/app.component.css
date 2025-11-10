@@ -12,6 +12,70 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.controls-bar {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-container {
+  flex: 1;
+  min-width: 250px;
+}
+
+.search-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 500px;
+  padding: 0.75rem 1.25rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.search-input::placeholder {
+  color: #b3b3b3;
+}
+
+.search-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #1ed760;
+}
+
+.trending-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: #b3b3b3;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1.5rem;
+  border-radius: 500px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.trending-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.trending-btn.active {
+  background: #1ed760;
+  color: #000000;
+  border-color: #1ed760;
 }
 
 .app-header h1 {
@@ -56,6 +120,22 @@
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .controls-bar {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .search-container {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .trending-btn {
+    width: 100%;
   }
 
   .app-header h1 {

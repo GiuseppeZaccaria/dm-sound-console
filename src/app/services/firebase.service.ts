@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, Firestore } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, Firestore, query, where, updateDoc, increment } from 'firebase/firestore';
 import { Sound } from '../models/sound.model';
 
 const firebaseConfig = {
@@ -31,7 +31,8 @@ export class FirebaseService {
       id: doc.data()['id'],
       title: doc.data()['title'],
       audioUrl: doc.data()['audioUrl'],
-      imageUrl: doc.data()['imageUrl']
+      imageUrl: doc.data()['imageUrl'],
+      playCount: doc.data()['playCount'] || 0
     }));
   }
 
@@ -39,8 +40,22 @@ export class FirebaseService {
     const soundsCol = collection(this.db, 'sounds');
     const newSound = {
       ...sound,
-      id: Date.now()
+      id: Date.now(),
+      playCount: 0
     };
     await addDoc(soundsCol, newSound);
+  }
+
+  async incrementPlayCount(soundId: number): Promise<void> {
+    const soundsCol = collection(this.db, 'sounds');
+    const q = query(soundsCol, where('id', '==', soundId));
+    const snapshot = await getDocs(q);
+    
+    if (!snapshot.empty) {
+      const docRef = snapshot.docs[0].ref;
+      await updateDoc(docRef, {
+        playCount: increment(1)
+      });
+    }
   }
 }

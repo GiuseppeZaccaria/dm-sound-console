@@ -1,9 +1,23 @@
 <div class="sound-card" (click)="onCardClick()" [class.playing]="isPlaying">
   <div class="card-image">
     <img [src]="sound.imageUrl" [alt]="sound.title">
+    @if (isPlaying) {
+      <div class="waveform">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+      </div>
+    }
     <div class="play-overlay">
       <div class="play-icon">{{ isPlaying ? '⏸' : '▶' }}</div>
     </div>
   </div>
-  <div class="card-title">{{ sound.title }}</div>
+  <div class="card-footer">
+    <div class="card-title">{{ sound.title }}</div>
+    @if (sound.playCount && sound.playCount > 0) {
+      <div class="play-count">▶ {{ sound.playCount }}</div>
+    }
+  </div>
 </div>

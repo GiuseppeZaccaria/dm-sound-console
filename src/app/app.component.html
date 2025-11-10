@@ -2,12 +2,32 @@
   <header class="app-header">
     <div class="header-content">
       <h1>🎵 DM Sound Console</h1>
-      <button class="upload-btn" (click)="openUploadModal()">Upload</button>
+      <div class="header-actions">
+        <button class="upload-btn" (click)="openUploadModal()">Upload</button>
+      </div>
+    </div>
+    
+    <div class="controls-bar">
+      <div class="search-container">
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="🔍 Cerca suoni..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()">
+      </div>
+      
+      <button 
+        class="trending-btn" 
+        [class.active]="showTrending"
+        (click)="toggleTrending()">
+        🔥 Trending
+      </button>
     </div>
   </header>
   
   <div class="sound-grid">
-    @for (sound of sounds; track sound.id) {
+    @for (sound of filteredSounds; track sound.id) {
       <app-sound-card 
         [sound]="sound" 
         [isPlaying]="isPlaying(sound.id)"
