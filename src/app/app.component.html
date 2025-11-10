@@ -3,6 +3,12 @@
     <div class="header-content">
       <h1>🎵 DM Sound Console</h1>
       <div class="header-actions">
+        @if (isAdmin) {
+          <span class="admin-badge">🔑 Admin</span>
+          <button class="logout-btn" (click)="logoutAdmin()">Logout Admin</button>
+        } @else {
+          <button class="admin-btn" (click)="openAdminLogin()">🔑</button>
+        }
         <button class="upload-btn" (click)="openUploadModal()">Upload</button>
       </div>
     </div>
@@ -118,6 +124,24 @@
       (close)="closeEditModal()" 
       (soundUpdated)="onSoundUpdated($event)">
     </app-edit-modal>
+  }
+
+  @if (showAdminLogin) {
+    <div class="modal-overlay" (click)="closeAdminLogin()">
+      <div class="admin-login-modal" (click)="$event.stopPropagation()">
+        <h2>🔑 Admin Login</h2>
+        <input 
+          type="password" 
+          [(ngModel)]="adminPassword" 
+          placeholder="Password"
+          (keyup.enter)="checkAdminPassword()"
+          class="admin-password-input">
+        <div class="admin-login-actions">
+          <button class="btn-cancel" (click)="closeAdminLogin()">Annulla</button>
+          <button class="btn-confirm" (click)="checkAdminPassword()">Conferma</button>
+        </div>
+      </div>
+    </div>
   }
 
 </div>

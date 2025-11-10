@@ -28,15 +28,18 @@ export class AppComponent implements OnInit, OnDestroy {
   theme: 'green' | 'purple' | 'blue' | 'red' = 'green';
   autoPlayNext: boolean = false;
   shuffleMode: boolean = false;
-  isAdmin: boolean = true;
+  isAdmin: boolean = false;
   showEditModal: boolean = false;
   soundToEdit: Sound | null = null;
+  showAdminLogin: boolean = false;
+  adminPassword: string = '';
 
   constructor(
     private soundService: SoundService
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = localStorage.getItem('isAdmin') === 'true';
     this.loadSounds();
     this.playbackSpeed = this.soundService.getSpeed();
     this.pitch = this.soundService.getPitch();
@@ -211,6 +214,33 @@ export class AppComponent implements OnInit, OnDestroy {
   closeEditModal(): void {
     this.showEditModal = false;
     this.soundToEdit = null;
+  }
+
+  openAdminLogin(): void {
+    this.showAdminLogin = true;
+  }
+
+  closeAdminLogin(): void {
+    this.showAdminLogin = false;
+    this.adminPassword = '';
+  }
+
+  checkAdminPassword(): void {
+    if (this.adminPassword === 'fe') {
+      this.isAdmin = true;
+      localStorage.setItem('isAdmin', 'true');
+      this.closeAdminLogin();
+      alert('Modalità Admin attivata!');
+    } else {
+      alert('Password errata!');
+      this.adminPassword = '';
+    }
+  }
+
+  logoutAdmin(): void {
+    this.isAdmin = false;
+    localStorage.removeItem('isAdmin');
+    alert('Modalità Admin disattivata');
   }
 
   onSoundUpdated(updatedSound: Sound): void {
