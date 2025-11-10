@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, Firestore, query, where, updateDoc, increment } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, Firestore, query, where, updateDoc, increment, deleteDoc } from 'firebase/firestore';
 import { Sound } from '../models/sound.model';
 
 const firebaseConfig = {
@@ -32,16 +32,18 @@ export class FirebaseService {
       title: doc.data()['title'],
       audioUrl: doc.data()['audioUrl'],
       imageUrl: doc.data()['imageUrl'],
-      playCount: doc.data()['playCount'] || 0
+      playCount: doc.data()['playCount'] || 0,
+      userId: doc.data()['userId']
     }));
   }
 
-  async addSound(sound: Omit<Sound, 'id'>): Promise<void> {
+  async addSound(sound: Omit<Sound, 'id'>, userId: string): Promise<void> {
     const soundsCol = collection(this.db, 'sounds');
     const newSound = {
       ...sound,
       id: Date.now(),
-      playCount: 0
+      playCount: 0,
+      userId: userId
     };
     await addDoc(soundsCol, newSound);
   }
@@ -56,6 +58,32 @@ export class FirebaseService {
       await updateDoc(docRef, {
         playCount: increment(1)
       });
+    }
+  }
+
+  async updateSound(sound: Sound): Promise<void> {
+    const soundsCol = collection(this.db, 'sounds');
+    const q = query(soundsCol, where('id', '==', sound.id));
+    const snapshot = await getDocs(q);
+    
+    if (!snapshot.empty) {
+      const docRef = snapshot.docs[0].ref;
+      await updateDoc(docRef, {
+        title: sound.title,
+        audioUrl: sound.audioUrl,
+        imageUrl: sound.imageUrl
+      });
+    }
+  }
+
+  async deleteSound(soundId: number): Promise<void> {
+    const soundsCol = collection(this.db, 'sounds');
+    const q = query(soundsCol, where('id', '==', soundId));
+    const snapshot = await getDocs(q);
+    
+    if (!snapshot.empty) {
+      const docRef = snapshot.docs[0].ref;
+      await deleteDoc(docRef);
     }
   }
 }

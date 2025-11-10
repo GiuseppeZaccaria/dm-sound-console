@@ -13,6 +13,10 @@
     <button class="loop-btn" [class.active]="isLooping" (click)="onLoopClick($event)">
       🔁
     </button>
+    @if (canEdit) {
+      <button class="edit-btn" (click)="onEditClick($event)">✏️</button>
+      <button class="delete-btn" (click)="onDeleteClick($event)">🗑️</button>
+    }
     <div class="play-overlay">
       <div class="play-icon">{{ isPlaying ? '⏸' : '▶' }}</div>
     </div>

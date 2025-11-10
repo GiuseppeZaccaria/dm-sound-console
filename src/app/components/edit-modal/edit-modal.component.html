@@ -1,0 +1,54 @@
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Modifica Suono</h2>
+      <button class="close-btn" (click)="closeModal()">✕</button>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="edit-form">
+      <div class="form-group">
+        <label>Titolo</label>
+        <input 
+          type="text" 
+          [(ngModel)]="title" 
+          name="title"
+          placeholder="Nome del suono"
+          [disabled]="uploading">
+      </div>
+
+      <div class="form-group">
+        <label>Immagine (lascia vuoto per mantenere)</label>
+        <input 
+          type="file" 
+          accept="image/*"
+          (change)="onImageSelect($event)"
+          [disabled]="uploading">
+        <div class="current-preview">
+          <img [src]="sound.imageUrl" alt="Current image">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Audio (lascia vuoto per mantenere)</label>
+        <input 
+          type="file" 
+          accept="audio/*"
+          (change)="onAudioSelect($event)"
+          [disabled]="uploading">
+      </div>
+
+      @if (uploading) {
+        <div class="upload-progress">{{ uploadProgress }}</div>
+      }
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeModal()" [disabled]="uploading">
+          Annulla
+        </button>
+        <button type="submit" class="btn-submit" [disabled]="uploading">
+          {{ uploading ? 'Caricamento...' : 'Salva' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

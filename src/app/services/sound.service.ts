@@ -22,8 +22,16 @@ export class SoundService {
     return from(this.firebaseService.getSounds());
   }
 
-  async addSound(sound: Omit<Sound, 'id'>): Promise<void> {
-    await this.firebaseService.addSound(sound);
+  async addSound(sound: Omit<Sound, 'id'>, userId: string): Promise<void> {
+    await this.firebaseService.addSound(sound, userId);
+  }
+
+  async updateSound(sound: Sound): Promise<void> {
+    await this.firebaseService.updateSound(sound);
+  }
+
+  async deleteSound(soundId: number): Promise<void> {
+    await this.firebaseService.deleteSound(soundId);
   }
 
   play(sound: Sound): void {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { SoundService } from '../../services/sound.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-upload-modal',
@@ -28,7 +29,11 @@ export class UploadModalComponent {
   private cloudName = 'digu51dei';
   private uploadPreset = 'g34lxkn3';
 
-  constructor(private http: HttpClient, private soundService: SoundService) {}
+  constructor(
+    private http: HttpClient,
+    private soundService: SoundService,
+    private authService: AuthService
+  ) {}
 
   checkPassword(): void {
     if (this.password === this.correctPassword) {
@@ -94,11 +99,14 @@ export class UploadModalComponent {
   }
 
   private async saveToJson(imageUrl: string, audioUrl: string): Promise<void> {
+    const user = this.authService.getCurrentUser();
+    if (!user) throw new Error('User not authenticated');
+    
     await this.soundService.addSound({
       title: this.title,
       audioUrl,
       imageUrl
-    });
+    }, user.uid);
   }
 
   closeModal(): void {

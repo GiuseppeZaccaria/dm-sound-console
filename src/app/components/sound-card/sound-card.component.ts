@@ -13,8 +13,11 @@ export class SoundCardComponent {
   @Input() sound!: Sound;
   @Input() isPlaying: boolean = false;
   @Input() isLooping: boolean = false;
+  @Input() canEdit: boolean = false;
   @Output() cardClick = new EventEmitter<Sound>();
   @Output() loopToggle = new EventEmitter<Sound>();
+  @Output() editSound = new EventEmitter<Sound>();
+  @Output() deleteSound = new EventEmitter<Sound>();
 
   onCardClick(): void {
     this.cardClick.emit(this.sound);
@@ -23,5 +26,15 @@ export class SoundCardComponent {
   onLoopClick(event: Event): void {
     event.stopPropagation();
     this.loopToggle.emit(this.sound);
+  }
+
+  onEditClick(event: Event): void {
+    event.stopPropagation();
+    this.editSound.emit(this.sound);
+  }
+
+  onDeleteClick(event: Event): void {
+    event.stopPropagation();
+    this.deleteSound.emit(this.sound);
   }
 }

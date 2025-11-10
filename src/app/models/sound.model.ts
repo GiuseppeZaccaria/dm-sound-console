@@ -5,4 +5,5 @@ export interface Sound {
   audioUrl: string;
   playCount?: number;
   isLooping?: boolean;
+  userId?: string;
 }

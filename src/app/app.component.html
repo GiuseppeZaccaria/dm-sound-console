@@ -1,9 +1,18 @@
-<div class="app-container">
+@if (!isAuthenticated) {
+  <div class="fade-in">
+    <app-auth></app-auth>
+  </div>
+} @else {
+<div class="app-container fade-in">
   <header class="app-header">
     <div class="header-content">
       <h1>🎵 DM Sound Console</h1>
       <div class="header-actions">
+        @if (isAdmin) {
+          <span class="admin-badge">👑 Admin</span>
+        }
         <button class="upload-btn" (click)="openUploadModal()">Upload</button>
+        <button class="logout-btn" (click)="logout()">Logout</button>
       </div>
     </div>
     
@@ -96,8 +105,11 @@
         [sound]="sound" 
         [isPlaying]="isPlaying(sound.id)"
         [isLooping]="isLooping(sound.id)"
+        [canEdit]="canEditSound(sound)"
         (cardClick)="onSoundClick($event)"
-        (loopToggle)="toggleLoop($event)">
+        (loopToggle)="toggleLoop($event)"
+        (editSound)="editSound($event)"
+        (deleteSound)="deleteSound($event)">
       </app-sound-card>
     }
   </div>
@@ -108,4 +120,13 @@
       (soundAdded)="onSoundAdded()">
     </app-upload-modal>
   }
+
+  @if (showEditModal && soundToEdit) {
+    <app-edit-modal 
+      [sound]="soundToEdit"
+      (close)="closeEditModal()" 
+      (soundUpdated)="onSoundUpdated($event)">
+    </app-edit-modal>
+  }
 </div>
+}

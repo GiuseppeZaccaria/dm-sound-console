@@ -3,13 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SoundCardComponent } from './components/sound-card/sound-card.component';
 import { UploadModalComponent } from './components/upload-modal/upload-modal.component';
+import { EditModalComponent } from './components/edit-modal/edit-modal.component';
+import { AuthComponent } from './components/auth/auth.component';
 import { SoundService } from './services/sound.service';
+import { AuthService } from './services/auth.service';
 import { Sound } from './models/sound.model';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, SoundCardComponent, UploadModalComponent],
+  imports: [CommonModule, FormsModule, SoundCardComponent, UploadModalComponent, EditModalComponent, AuthComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -27,11 +30,25 @@ export class AppComponent implements OnInit, OnDestroy {
   theme: 'green' | 'purple' | 'blue' | 'red' = 'green';
   autoPlayNext: boolean = false;
   shuffleMode: boolean = false;
+  isAuthenticated: boolean = false;
+  isAdmin: boolean = false;
+  showEditModal: boolean = false;
+  soundToEdit: Sound | null = null;
 
-  constructor(private soundService: SoundService) {}
+  constructor(
+    private soundService: SoundService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    this.loadSounds();
+    this.authService.currentUser$.subscribe(user => {
+      this.isAuthenticated = !!user;
+      this.isAdmin = this.authService.isAdmin();
+      if (user) {
+        this.loadSounds();
+      }
+    });
+    
     this.playbackSpeed = this.soundService.getSpeed();
     this.pitch = this.soundService.getPitch();
     document.addEventListener('keydown', (e) => this.handleKeyPress(e));
@@ -164,6 +181,10 @@ export class AppComponent implements OnInit, OnDestroy {
     this.shuffleMode = !this.shuffleMode;
   }
 
+  async logout(): Promise<void> {
+    await this.authService.logout();
+  }
+
   toggleLoop(sound: Sound): void {
     const wasPlaying = this.isPlaying(sound.id);
     sound.isLooping = !sound.isLooping;
@@ -179,6 +200,12 @@ export class AppComponent implements OnInit, OnDestroy {
     return loopingSound?.id === soundId;
   }
 
+  canEditSound(sound: Sound): boolean {
+    if (this.isAdmin) return true;
+    const user = this.authService.getCurrentUser();
+    return user?.uid === sound.userId;
+  }
+
   handleKeyPress(event: KeyboardEvent): void {
     const key = parseInt(event.key);
     if (key >= 1 && key <= 9) {
@@ -186,6 +213,38 @@ export class AppComponent implements OnInit, OnDestroy {
       if (this.filteredSounds[index]) {
         this.onSoundClick(this.filteredSounds[index]);
       }
+    }
+  }
+
+  editSound(sound: Sound): void {
+    this.soundToEdit = sound;
+    this.showEditModal = true;
+  }
+
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.soundToEdit = null;
+  }
+
+  onSoundUpdated(updatedSound: Sound): void {
+    this.soundService.updateSound(updatedSound).then(() => {
+      alert('Suono aggiornato!');
+      this.loadSounds();
+    }).catch(error => {
+      alert('Errore durante l\'aggiornamento');
+      console.error(error);
+    });
+  }
+
+  deleteSound(sound: Sound): void {
+    if (confirm(`Vuoi eliminare "${sound.title}"?`)) {
+      this.soundService.deleteSound(sound.id).then(() => {
+        alert('Suono eliminato!');
+        this.loadSounds();
+      }).catch(error => {
+        alert('Errore durante l\'eliminazione');
+        console.error(error);
+      });
     }
   }
 }
