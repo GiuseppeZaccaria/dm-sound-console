@@ -21,9 +21,8 @@ export class AuthService {
     onAuthStateChanged(this.auth, (user) => {
       this.currentUserSubject.next(user);
       
-      // Set expiration timestamp (3 days from now)
       if (user) {
-        const expirationTime = Date.now() + (3 * 24 * 60 * 60 * 1000); // 3 days
+        const expirationTime = Date.now() + (3 * 24 * 60 * 60 * 1000);
         localStorage.setItem('authExpiration', expirationTime.toString());
       } else {
         localStorage.removeItem('authExpiration');
@@ -42,11 +41,16 @@ export class AuthService {
   }
 
   async login(email: string, password: string): Promise<void> {
-    await signInWithEmailAndPassword(this.auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+    const userExists = await this.checkIfUserExists(userCredential.user.uid);
+    if (!userExists) {
+      await this.createPendingUser(userCredential.user);
+    }
   }
 
   async register(email: string, password: string): Promise<void> {
-    await createUserWithEmailAndPassword(this.auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+    await this.createPendingUser(userCredential.user);
   }
 
   async logout(): Promise<void> {
@@ -55,7 +59,12 @@ export class AuthService {
 
   async loginWithGoogle(): Promise<void> {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(this.auth, provider);
+    const result = await signInWithPopup(this.auth, provider);
+    
+    const userExists = await this.checkIfUserExists(result.user.uid);
+    if (!userExists) {
+      await this.createPendingUser(result.user);
+    }
   }
 
   isAuthenticated(): boolean {
@@ -69,11 +78,64 @@ export class AuthService {
   isAdmin(): boolean {
     const user = this.currentUserSubject.value;
     if (!user || !user.email) return false;
-    
-    const adminEmails = [
-      '3bzaccaria.giuseppe@gmail.com', // Sostituisci con la tua email
-    ];
-    
-    return adminEmails.includes(user.email);
+    return this.adminEmails.includes(user.email);
   }
+
+  private async createPendingUser(user: any): Promise<void> {
+    const { getFirestore, collection, addDoc } = await import('firebase/firestore');
+    const { getApp } = await import('firebase/app');
+    const app = getApp();
+    const db = getFirestore(app);
+    
+    await addDoc(collection(db, 'users'), {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || user.email,
+      status: 'pending',
+      createdAt: Date.now()
+    });
+  }
+
+  private async checkIfUserExists(uid: string): Promise<boolean> {
+    const { getFirestore, collection, query, where, getDocs } = await import('firebase/firestore');
+    const { getApp } = await import('firebase/app');
+    const app = getApp();
+    const db = getFirestore(app);
+    
+    const usersCol = collection(db, 'users');
+    const q = query(usersCol, where('uid', '==', uid));
+    const snapshot = await getDocs(q);
+    
+    return !snapshot.empty;
+  }
+
+  async getUserStatus(uid: string): Promise<string> {
+    const { getFirestore, collection, query, where, getDocs } = await import('firebase/firestore');
+    const { getApp } = await import('firebase/app');
+    const app = getApp();
+    const db = getFirestore(app);
+    
+    const usersCol = collection(db, 'users');
+    const q = query(usersCol, where('uid', '==', uid));
+    const snapshot = await getDocs(q);
+    
+    if (snapshot.empty) return 'pending';
+    return snapshot.docs[0].data()['status'] || 'pending';
+  }
+
+  async getAllUsers(): Promise<any[]> {
+    const { getFirestore, collection, getDocs } = await import('firebase/firestore');
+    const { getApp } = await import('firebase/app');
+    const app = getApp();
+    const db = getFirestore(app);
+    
+    const usersCol = collection(db, 'users');
+    const snapshot = await getDocs(usersCol);
+    
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
+
+  private adminEmails = [
+    '3bzaccaria.giuseppe@gmail.com',
+  ];
 }

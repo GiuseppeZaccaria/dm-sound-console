@@ -1,0 +1,35 @@
+<div class="user-management-container">
+  <div class="header">
+    <h2>👥 Gestione Utenti ({{ allUsers.length }})</h2>
+    <button class="close-btn" (click)="close.emit()">✕</button>
+  </div>
+
+  @if (loading) {
+    <div class="loading">Caricamento...</div>
+  } @else if (allUsers.length === 0) {
+    <div class="empty-state">Nessun utente registrato</div>
+  } @else {
+    <div class="users-list">
+      @for (user of allUsers; track user.uid) {
+        <div class="user-card">
+          <div class="user-info">
+            <div class="user-name">{{ user.displayName }}</div>
+            <div class="user-email">{{ user.email }}</div>
+            <div class="user-date">{{ formatDate(user.createdAt) }}</div>
+            <div class="user-status" [style.color]="getStatusColor(user.status)">
+              ● {{ user.status }}
+            </div>
+          </div>
+          <div class="user-actions">
+            <select class="status-select" [value]="user.status" (change)="changeStatus(user, $any($event.target).value)">
+              <option value="pending">⏳ Pending</option>
+              <option value="approved">✓ Approved</option>
+              <option value="rejected">✕ Rejected</option>
+            </select>
+            <button class="btn-delete" (click)="deleteUser(user)">🗑️</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

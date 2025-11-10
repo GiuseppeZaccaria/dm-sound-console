@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { SoundCardComponent } from './components/sound-card/sound-card.component';
 import { UploadModalComponent } from './components/upload-modal/upload-modal.component';
 import { EditModalComponent } from './components/edit-modal/edit-modal.component';
+import { UserManagementComponent } from './components/user-management/user-management.component';
+import { PendingApprovalComponent } from './components/pending-approval/pending-approval.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { SoundService } from './services/sound.service';
 import { AuthService } from './services/auth.service';
@@ -12,7 +14,7 @@ import { Sound } from './models/sound.model';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, SoundCardComponent, UploadModalComponent, EditModalComponent, AuthComponent],
+  imports: [CommonModule, FormsModule, SoundCardComponent, UploadModalComponent, EditModalComponent, UserManagementComponent, PendingApprovalComponent, AuthComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -34,6 +36,8 @@ export class AppComponent implements OnInit, OnDestroy {
   isAdmin: boolean = false;
   showEditModal: boolean = false;
   soundToEdit: Sound | null = null;
+  showUserManagement: boolean = false;
+  userStatus: string = 'unknown';
 
   constructor(
     private soundService: SoundService,
@@ -41,11 +45,26 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.authService.currentUser$.subscribe(user => {
+    this.authService.currentUser$.subscribe(async user => {
       this.isAuthenticated = !!user;
       this.isAdmin = this.authService.isAdmin();
+      
       if (user) {
-        this.loadSounds();
+        // DEBUG: Recupera tutti gli utenti
+        const allUsers = await this.authService.getAllUsers();
+        console.log('🔍 TUTTI GLI UTENTI:', allUsers);
+        console.log('👤 UTENTE CORRENTE UID:', user.uid);
+        console.log('📧 UTENTE CORRENTE EMAIL:', user.email);
+        
+        this.userStatus = await this.authService.getUserStatus(user.uid);
+        console.log('✅ STATUS RECUPERATO:', this.userStatus);
+        console.log('🔑 IS ADMIN:', this.isAdmin);
+        
+        if (this.userStatus === 'approved' || this.isAdmin) {
+          this.loadSounds();
+        }
+      } else {
+        this.userStatus = 'unknown';
       }
     });
     
@@ -246,5 +265,13 @@ export class AppComponent implements OnInit, OnDestroy {
         console.error(error);
       });
     }
+  }
+
+  openUserManagement(): void {
+    this.showUserManagement = true;
+  }
+
+  closeUserManagement(): void {
+    this.showUserManagement = false;
   }
 }

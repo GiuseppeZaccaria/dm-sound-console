@@ -1,0 +1,81 @@
+.pending-container {
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.pending-content {
+  text-align: center;
+  max-width: 500px;
+}
+
+.icon {
+  font-size: 5rem;
+  margin-bottom: 2rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 1rem 0;
+}
+
+p {
+  font-size: 1.125rem;
+  color: #b3b3b3;
+  margin: 0 0 1rem 0;
+  line-height: 1.6;
+}
+
+.sub {
+  font-size: 1rem;
+  color: #6a6a6a;
+  margin-bottom: 2rem;
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.875rem 2.5rem;
+  border-radius: 500px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.04);
+}

@@ -184,7 +184,8 @@
 }
 
 .upload-btn,
-.logout-btn {
+.logout-btn,
+.users-btn {
   background: var(--accent-color);
   color: #000000;
   border: none;
@@ -196,18 +197,21 @@
   transition: all 0.2s;
 }
 
-.logout-btn {
+.logout-btn,
+.users-btn {
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .upload-btn:hover,
-.logout-btn:hover {
+.logout-btn:hover,
+.users-btn:hover {
   transform: scale(1.04);
 }
 
-.logout-btn:hover {
+.logout-btn:hover,
+.users-btn:hover {
   background: rgba(255, 255, 255, 0.15);
 }
 
@@ -270,7 +274,8 @@
   }
 
   .upload-btn,
-  .logout-btn {
+  .logout-btn,
+  .users-btn {
     padding: 0.625rem 1.5rem;
     font-size: 0.875rem;
   }

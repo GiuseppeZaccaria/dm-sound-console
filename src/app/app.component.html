@@ -2,6 +2,14 @@
   <div class="fade-in">
     <app-auth></app-auth>
   </div>
+} @else if (userStatus === 'pending' && !isAdmin) {
+  <div class="fade-in">
+    <app-pending-approval (logout)="logout()"></app-pending-approval>
+  </div>
+} @else if (userStatus === 'rejected') {
+  <div class="fade-in">
+    <app-auth></app-auth>
+  </div>
 } @else {
 <div class="app-container fade-in">
   <header class="app-header">
@@ -10,6 +18,7 @@
       <div class="header-actions">
         @if (isAdmin) {
           <span class="admin-badge">👑 Admin</span>
+          <button class="users-btn" (click)="openUserManagement()">👥 Users</button>
         }
         <button class="upload-btn" (click)="openUploadModal()">Upload</button>
         <button class="logout-btn" (click)="logout()">Logout</button>
@@ -127,6 +136,12 @@
       (close)="closeEditModal()" 
       (soundUpdated)="onSoundUpdated($event)">
     </app-edit-modal>
+  }
+
+  @if (showUserManagement) {
+    <div class="modal-overlay" (click)="closeUserManagement()">
+      <app-user-management (close)="closeUserManagement()"></app-user-management>
+    </div>
   }
 </div>
 }
