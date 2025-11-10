@@ -385,3 +385,121 @@
   color: #ffffff;
   transform: scale(1.04);
 }
+.app-login-container {
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #0f1419, #121212);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-box {
+  background: rgba(40, 40, 40, 0.95);
+  border-radius: 16px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.9);
+  text-align: center;
+}
+
+.login-box h1 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 1rem 0;
+}
+
+.login-box p {
+  color: #b3b3b3;
+  margin: 0 0 2rem 0;
+  font-size: 1rem;
+}
+
+.app-password-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  color: #ffffff;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.app-password-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(30, 215, 96, 0.2);
+}
+
+.btn-login {
+  width: 100%;
+  background: var(--accent-color);
+  color: #000000;
+  border: none;
+  padding: 1rem;
+  border-radius: 500px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-login:hover {
+  transform: scale(1.04);
+  box-shadow: 0 8px 24px rgba(30, 215, 96, 0.4);
+}
+.skeleton-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.skeleton-image {
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skeleton-title {
+  height: 1rem;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  width: 80%;
+}
+
+.skeleton-subtitle {
+  height: 0.75rem;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  width: 50%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

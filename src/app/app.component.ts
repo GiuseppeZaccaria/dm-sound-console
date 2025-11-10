@@ -18,6 +18,7 @@ export class AppComponent implements OnInit, OnDestroy {
   sounds: Sound[] = [];
   filteredSounds: Sound[] = [];
   showUploadModal: boolean = false;
+  loading: boolean = true;
   searchQuery: string = '';
   showTrending: boolean = false;
   gridSize: 'small' | 'medium' | 'large' = 'medium';
@@ -33,14 +34,19 @@ export class AppComponent implements OnInit, OnDestroy {
   soundToEdit: Sound | null = null;
   showAdminLogin: boolean = false;
   adminPassword: string = '';
+  isAppUnlocked: boolean = false;
+  appPassword: string = '';
 
   constructor(
     private soundService: SoundService
   ) {}
 
   ngOnInit(): void {
+    this.isAppUnlocked = localStorage.getItem('appUnlocked') === 'true';
     this.isAdmin = localStorage.getItem('isAdmin') === 'true';
-    this.loadSounds();
+    if (this.isAppUnlocked) {
+      this.loadSounds();
+    }
     this.playbackSpeed = this.soundService.getSpeed();
     this.pitch = this.soundService.getPitch();
     document.addEventListener('keydown', (e) => this.handleKeyPress(e));
@@ -51,9 +57,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   loadSounds(): void {
+    this.loading = true;
     this.soundService.getSounds().subscribe(sounds => {
       this.sounds = sounds;
       this.applyFilters();
+      this.loading = false;
     });
   }
 
@@ -241,6 +249,17 @@ export class AppComponent implements OnInit, OnDestroy {
     this.isAdmin = false;
     localStorage.removeItem('isAdmin');
     alert('Modalità Admin disattivata');
+  }
+
+  checkAppPassword(): void {
+    if (this.appPassword === 'dm2025') {
+      this.isAppUnlocked = true;
+      localStorage.setItem('appUnlocked', 'true');
+      this.loadSounds();
+    } else {
+      alert('Password errata!');
+      this.appPassword = '';
+    }
   }
 
   onSoundUpdated(updatedSound: Sound): void {

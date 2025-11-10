@@ -1,3 +1,18 @@
+@if (!isAppUnlocked) {
+  <div class="app-login-container fade-in">
+    <div class="login-box">
+      <h1>🎵 DM Sound Console</h1>
+      <p>Inserisci la password per accedere</p>
+      <input 
+        type="password" 
+        [(ngModel)]="appPassword" 
+        placeholder="Password"
+        (keyup.enter)="checkAppPassword()"
+        class="app-password-input">
+      <button class="btn-login" (click)="checkAppPassword()">Accedi</button>
+    </div>
+  </div>
+} @else {
 <div class="app-container fade-in">
   <header class="app-header">
     <div class="header-content">
@@ -97,17 +112,29 @@
   </header>
   
   <div class="sound-grid" [class.grid-small]="gridSize === 'small'" [class.grid-large]="gridSize === 'large'">
-    @for (sound of filteredSounds; track sound.id) {
-      <app-sound-card 
-        [sound]="sound" 
-        [isPlaying]="isPlaying(sound.id)"
-        [isLooping]="isLooping(sound.id)"
-        [canEdit]="canEditSound(sound)"
-        (cardClick)="onSoundClick($event)"
-        (loopToggle)="toggleLoop($event)"
-        (editSound)="editSound($event)"
-        (deleteSound)="deleteSound($event)">
-      </app-sound-card>
+    @if (loading) {
+      @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
+        <div class="skeleton-card">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-subtitle"></div>
+          </div>
+        </div>
+      }
+    } @else {
+      @for (sound of filteredSounds; track sound.id) {
+        <app-sound-card 
+          [sound]="sound" 
+          [isPlaying]="isPlaying(sound.id)"
+          [isLooping]="isLooping(sound.id)"
+          [canEdit]="canEditSound(sound)"
+          (cardClick)="onSoundClick($event)"
+          (loopToggle)="toggleLoop($event)"
+          (editSound)="editSound($event)"
+          (deleteSound)="deleteSound($event)">
+        </app-sound-card>
+      }
     }
   </div>
 
@@ -145,3 +172,4 @@
   }
 
 </div>
+}
